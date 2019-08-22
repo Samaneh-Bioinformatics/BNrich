@@ -19,3 +19,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/Samaneh-Bioinformatics/BNrich
+BugReports: https://github.com/Samaneh-Bioinformatics/BNrich/issues
