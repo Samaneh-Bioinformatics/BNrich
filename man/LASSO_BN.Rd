@@ -19,3 +19,6 @@ A list contains two lists.BN_H and BN_D are simplified BNs
 \description{
 LASSO regression – second step of simplification of BNs structures
 }
+\examples{
+LASSO_BN(BN,data_h,data_d)
+}

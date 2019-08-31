@@ -21,3 +21,6 @@ A listcontains four lists BN_h, BN_d, coef_h and coef_d
 \description{
 Estimate parameters of BNs in control and disease states
 }
+\examples{
+esti_par(BN_H,BN_D,data_h,data_d)
+}

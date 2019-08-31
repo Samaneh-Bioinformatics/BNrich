@@ -5,7 +5,7 @@
 \title{Testing the equality regression coefficients}
 \usage{
 parm_Ttest(data_h, coef_h, BN_h, data_d, coef_d, BN_d, var_mat_Bh,
-  var_mat_Bd)
+  var_mat_Bd, pathway.id1)
 }
 \arguments{
 \item{data_h}{A list contains data frames related to control objects for any BN}
@@ -23,10 +23,15 @@ parm_Ttest(data_h, coef_h, BN_h, data_d, coef_d, BN_d, var_mat_Bh,
 \item{var_mat_Bh}{A list contains covariance matrixes for any node of BN_h}
 
 \item{var_mat_Bd}{A list contains covariance matrixes for any node of BN_d}
+
+\item{pathway.id1}{A vector contains modified KEEG pathway IDs}
 }
 \value{
 A data frame contains T-test results for all parameters in final BNs
 }
 \description{
 t-test for equality the corresponging parameters in any BN
+}
+\examples{
+parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd, pathway.id1)
 }

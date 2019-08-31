@@ -4,12 +4,13 @@
 \alias{unify_path}
 \title{Simplification networks -- applied to unifying nodes}
 \usage{
-unify_path(dataH, dataD, mapkG, pathway.id)
+unify_path(dataH = dataH, dataD = dataD, mapkG = mapkG,
+  pathway.id = pathway.id)
 }
 \arguments{
-\item{dataH}{A data frame contains (healthy) control object data}
+\item{dataH}{A data frame contains (healthy) control objects data}
 
-\item{dataD}{A data frame contains disease object data}
+\item{dataD}{A data frame contains disease objects data}
 
 \item{mapkG}{A list contains imported 187 signaling pathways}
 
@@ -20,4 +21,7 @@ A list contain data_h,data_d,mapkG1 and pathway.id1
 }
 \description{
 Unifying nodes based imported signaling pathways and GE data
+}
+\examples{
+unify_path()
 }

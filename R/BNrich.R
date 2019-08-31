@@ -1,14 +1,51 @@
+#' @title Download necessary files to start BNrich
+#' @description Download necessary files to start BNrich
+#' @importFrom utils download.file
+#' @return A list contain mapkG, PathName_final and pathway.id
+#' mapkG is a list contains imported 187 preprocessed signaling pathways
+#' PathName_final is a data.frame includes names and IDs of all 187 pathways
+#' pathway.id is a character vector of pathways IDs
+#'
+#' @export
+#'
+#' @examples
+#' start_files()
+
+start_files <- function(){
+  destfile <- "./R/BNrich-start.rda"
+  fileURL <-
+    "https://github.com/Samaneh-Bioinformatics/BNrich-RData/raw/master/BNrich-start.rda"
+  if (!file.exists(destfile)) {
+    print("please be patient, the files are downloading...")
+    #download.file(fileURL ,destfile,method="auto")
+    files <- c(fileURL)
+    oldw <- getOption("warn")
+    options(warn = -1)
+    for (file in files) {
+      tryCatch(download.file(file, destfile, method="auto"),
+      error = function(e) print(paste(file, 'did not work out')))
+    }
+    options(warn = oldw)
+   }
+  return(destfile)
+ }
+
+
 #' @title Simplification networks -- applied to unifying nodes
 #' @description Unifying nodes based imported signaling pathways and GE data
-#' @param dataH A data frame contains (healthy) control object data
-#' @param dataD A data frame contains disease object data
+#' @param dataH A data frame contains (healthy) control objects data
+#' @param dataD A data frame contains disease objects data
 #' @param mapkG A list contains imported 187 signaling pathways
 #' @param pathway.id A vector contains 187 KEEG pathway IDs
 #' @importFrom graph nodes removeNode edgeMatrix
 #' @return A list contain data_h,data_d,mapkG1 and pathway.id1
+#'
 #' @export
+#'
+#' @examples
+#' unify_path()
 
-unify_path <- function(dataH,dataD,mapkG,pathway.id){
+unify_path <- function(dataH=dataH,dataD=dataD,mapkG = mapkG,pathway.id = pathway.id){
   NOD <- lapply(mapkG,nodes)
   NOD <- lapply(NOD,as.vector)
   data_h <- list()
@@ -50,7 +87,11 @@ unify_path <- function(dataH,dataD,mapkG,pathway.id){
 #' @param mapkG1 A list contains unified signaling pathways
 #' @importFrom bnlearn as.bn
 #' @return A list contains Bayesian networks structures
+#'
 #' @export
+#'
+#' @examples
+#' BN_struct(mapkG1)
 
 BN_struct <- function(mapkG1){
   BN=list()
@@ -67,7 +108,11 @@ BN_struct <- function(mapkG1){
 #' @importFrom glmnet cv.glmnet
 #' @importFrom stats coef
 #' @return A list contains two lists.BN_H and BN_D are simplified BNs
+#'
 #' @export
+#'
+#' @examples
+#' LASSO_BN(BN,data_h,data_d)
 
 LASSO_BN <- function(BN,data_h,data_d){
   oldw <- getOption("warn")
@@ -103,7 +148,11 @@ LASSO_BN <- function(BN,data_h,data_d){
 #' @importFrom bnlearn bn.fit
 #' @importFrom stats coef
 #' @return A listcontains four lists BN_h, BN_d, coef_h and coef_d
+#'
 #' @export
+#'
+#' @examples
+#' esti_par(BN_H,BN_D,data_h,data_d)
 
 
 esti_par <- function(BN_H,BN_D,data_h,data_d){
@@ -131,7 +180,11 @@ esti_par <- function(BN_H,BN_D,data_h,data_d){
 #' @param BN_d A list of BNs learned by disease objects data
 #' @importFrom corpcor pseudoinverse
 #' @return A listcontains two lists var_mat_Bh and var_mat_Bd
+#'
 #' @export
+#'
+#' @examples
+#' var_mat(data_h,coef_h,BN_h,data_d,coef_d,BN_d)
 
 
 var_mat <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d){
@@ -180,11 +233,15 @@ var_mat <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d){
 #' @param BN_d A list contains BNs learned by disease objects data
 #' @param var_mat_Bh A list contains covariance matrixes for any node of BN_h
 #' @param var_mat_Bd A list contains covariance matrixes for any node of BN_d
+#' @param pathway.id1 A vector contains modified KEEG pathway IDs
 #' @importFrom stats pt p.adjust complete.cases
 #' @return A data frame contains T-test results for all parameters in final BNs
 #' @export
+#'
+#' @examples
+#' parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd, pathway.id1)
 
-parm_Ttest <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd){
+parm_Ttest <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd, pathway.id1){
   t.test2 <- function(m1,m2,s1,s2,n1,n2){
     se <- sqrt((s1^2/(n1)) + (s2^2/(n2)))
     # welch-satterthwaite df
@@ -213,7 +270,7 @@ parm_Ttest <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_
           From <- "intercept"}
         T <- t.test2(m1,m2,s1,s2,n1,n2)
         Pval <- T["p-value"]
-        Ttest_results <- rbind(Ttest_results,c(From, To,k,pathway.id[k],Pval,m1,m2))
+        Ttest_results <- rbind(Ttest_results,c(From, To,k,pathway.id1[k],Pval,m1,m2))
       }}}
   colnames(Ttest_results) <- c("From","To","pathway.number","pathwayID","Pval","coefficient in disease","coefficient in control")
   Ttest_results$fdr <- p.adjust(Ttest_results$Pval,method = "fdr")
@@ -224,13 +281,19 @@ parm_Ttest <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_
 
 #' @title Analysis of significant final BNs
 #' @description Fisher's exact test applied to PEA on final BNs
+#'
 #' @param Ttest_results A data frame contains T-test results for all parameters
 #' @param fdr.value A numeric threshold to determine significant parameters
 #' @param pathway.id1 A vector contains modified KEEG pathway IDs
 #' @param PathName_final A data frame contains is IDs and names of KEEG pathways
+#'
 #' @importFrom stats fisher.test p.adjust
 #' @return A data frame contains fisher test results for any final pathways
+#'
 #' @export
+#'
+#' @examples
+#' BNrich(Ttest_results,pathway.id1,PathName_final)
 
 BNrich <- function(Ttest_results,fdr.value = 0.05,pathway.id1,PathName_final){
   Ttest_results <- Ttest_results[order(Ttest_results$pathway.number),]

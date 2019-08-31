@@ -21,3 +21,6 @@ A data frame contains fisher test results for any final pathways
 \description{
 Fisher's exact test applied to PEA on final BNs
 }
+\examples{
+BNrich(Ttest_results,pathway.id1,PathName_final)
+}

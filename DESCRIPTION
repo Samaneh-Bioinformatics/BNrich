@@ -14,7 +14,9 @@ Imports:
     bnlearn,
     corpcor,
     glmnet,
-    graph
+    graph,
+    stats,
+    utils
 Suggests: 
     knitr,
     rmarkdown

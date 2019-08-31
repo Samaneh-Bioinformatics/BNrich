@@ -15,3 +15,6 @@ A list contains Bayesian networks structures
 \description{
 Construct BNs structures using unified signaling pathways
 }
+\examples{
+BN_struct(mapkG1)
+}
