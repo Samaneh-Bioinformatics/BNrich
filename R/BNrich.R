@@ -14,7 +14,7 @@
 start_files <- function(){
   destfile <- "./R/BNrich-start.rda"
   fileURL <-
-    "https://github.com/Samaneh-Bioinformatics/BNrich-RData/raw/master/BNrich-start.rda"
+    "https://github.com/Samaneh-Bioinformatics/RData/raw/master/BNrich-start.rda"
   if (!file.exists(destfile)) {
     print("please be patient, the files are downloading...")
     #download.file(fileURL ,destfile,method="auto")
