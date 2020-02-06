@@ -1,23 +1,32 @@
 ---
-title: "BNrich: A Novel Pathway Enrichment Analysis Based on Bayesian Network"
+title: 'BNrich: A Novel Pathway Enrichment Analysis Based on Bayesian Network'
+author: "Samaneh Maleknia*(1),Mohsen Namazi(1),Kaveh Kavousi(1),Ali Sharifi-Zarchi(2),Vahid Rezaei Tabar(3)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{BNrich_vignette}
+  %\usepackage[UTF-8]{inputenc}
+  %\VignetteEncoding{UTF-8}
+---
 
-author: | 
-  | Samaneh Maleknia* (1), Mohsen Namazi (1), Kaveh Kavousi(1), Ali Sharifi-Zarchi (2), Vahid Rezaei Tabar (3)
+  (1) Department of Bioinformatics, Institute of Biochemistry and Biophysics, University of Tehran, Tehran, Iran 
   
-  | ----------------------------------------------------------------------------
   
-  | (1) Department of Bioinformatics, Institute of Biochemistry and Biophysics, University of Tehran, Tehran, Iran 
-  | (2) Department of Computer Engineering, Sharif University of Technology, Tehran, Iran
-  | (3) Department of Statis-tics, Allameh Tabataba'i University, Tehran, Iran
-  | maleknias@gmail.com
-date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
+  (2) Department of Computer Engineering, Sharif University of Technology, Tehran, Iran
+  
+  
+  (3) Department of Statis-tics, Allameh Tabataba'i University, Tehran, Iran
+ 
+  
+  "maleknias@gmail.com"
+  
+  
+date: "`r Sys.Date()`"
+
+
 abstract: This package has developed a tool for performing a novel pathway enrichment analysis based on Bayesian network (BNrich) to investigate the topology features of the pathways. This algorithm as a biologically intuitive, method, analyzes of most structural data acquired from signaling pathways such as causal relationships between genes using the property of Bayesian networks and also infer finalized networks more conveniently by simplifying networks in the early stages and using Least Absolute Shrinkage Selector Operator (LASSO). impacted pathways are ultimately prioritized the by Fisher’s Exact Test on significant parameters. Here, we provide an instance code that applies BNrich in all of the fields described above.
 
-vignette: >
-    %\VignetteIndexEntry{Vignette Title}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
-    
+---
 output:
   html_document:
     toc: true
@@ -39,7 +48,7 @@ Rscript -e "rmarkdown::render('sample.Rmd', c('html_document'), clean=FALSE)"
 
 # Introduction
 
-This document offers an introductory overview of how to use the package. The BNrich tool uses Bayesian Network (BN) in a new topology-based pathway analysis (TPA) method. The BN has been demonstrated as a beneficial technique for integrating and modeling biological data into causal relationships (1–5). The proposed method utilizes BN to model variations in downstream components (children) as a consequence of the change in upstream components (parents). For this purpose,  The method employs 187 KEGG human non-metabolic pathways (6–8) which their cycles were eliminated manually by a biological intuitive, as BN structures and gene expression data to estimate its parameters (9,10). The cycles of inferred networks were eliminated on the basis of biologically intuitive rules instead of using computing algorithms (11). The inferred networks are simplified in two steps; unifying genes and LASSO. Similarly, the originally continuous gene expression data is used to BN parameters learning, rather than discretized data (9). The algorithm estimates regression coefficients by continuous data based on the parameter learning techniques in the BN (12,13). The final impacted pathways are gained by Fisher’s exact test. This method can represent effective genes and biological relations in impacted pathways based on a significant level.
+This document offers an introductory overview of how to use the package. The BNrich tool uses Bayesian Network (BN) in a new topology-based pathway analysis (TPA) method. The BN has been demonstrated as a beneficial technique for integrating and modeling biological data into causal relationships (1–4). The proposed method utilizes BN to model variations in downstream components (children) as a consequence of the change in upstream components (parents). For this purpose,  The method employs 187 KEGG human non-metabolic pathways (5–7) which their cycles were eliminated manually by a biological intuitive, as BN structures and gene expression data to estimate its parameters (8,9). The cycles of inferred networks were eliminated on the basis of biologically intuitive rules instead of using computing algorithms (10). The inferred networks are simplified in two steps; unifying genes and LASSO. Similarly, the originally continuous gene expression data is used to BN parameters learning, rather than discretized data (8). The algorithm estimates regression coefficients by continuous data based on the parameter learning techniques in the BN (11,12). The final impacted pathways are gained by Fisher’s exact test. This method can represent effective genes and biological relations in impacted pathways based on a significant level.
 
 # Quick Start
 
@@ -60,13 +69,11 @@ load(files)
 ```
 
 The input data should be as two data frames in states disease and (healthy) control. The row names of any data frame are KEGG geneID and the number of subjects in any of them should not be less than 20, otherwise the user may encounters error in `LASSO` step. Initially, we can load dataset example.
-The example data extracted from a part of `GSE47756` dataset, the gene expression data from colorectal cancer study (14).
+The example data extracted from a part of `GSE47756` dataset, the gene expression data from colorectal cancer study (13).
 
 ```{r example_of_dataset, eval=FALSE}
-example <- c("GSE93601H","GSE93601D")
+example <- c("dataH","dataD")
 data(list= example,package = "BNrich")
-dataH <- GSE93601H
-dataD <- GSE93601D
 head(dataH)
 ```
 
@@ -153,7 +160,6 @@ pathway.id1[1]
 ```
 
 ```{r the_first_unified_pathway_information, eval=FALSE}
-mapkG1 <- unify_results$mapkG1[[1]]
 mapkG1[[1]]
 ```
 ```
@@ -171,7 +177,7 @@ BN <- BN_struct(unify_results$mapkG1)
 The `BN_struct` function returns a list contains BNs structures reconstructed from all `mapkG1`.
 
 ## The LASSO regression, the second step of simplification
-Given that the data used is continuous, each node is modeled as a regression line on its parents (12,15). Thus, on some of these regression lines, the number of these independent variables is high, so in order to avoid the collinearity problem, we need to use the Lasso regression (16,17).
+Given that the data used is continuous, each node is modeled as a regression line on its parents (11,14). Thus, on some of these regression lines, the number of these independent variables is high, so in order to avoid the collinearity problem, we need to use the Lasso regression (15,16).
 We perform this function for any node with more than one parent, in all BNs achieved by `BN_struct` function, based on control and disease data obtained by `unify_results` function. 
 
 ```{r LASSO_function, eval=FALSE}
@@ -272,7 +278,7 @@ T-test perfoms between any corresponding parameters between each pair of learned
 ```{r parm_Ttest_function, eval=FALSE}
 var_mat_Bh <- var_mat_results $var_mat_Bh
 var_mat_Bd <- var_mat_results $var_mat_Bd
-Ttest_results <- parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh, var_mat_Bd)
+Ttest_results <- parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh, var_mat_Bd,pathway.id1)
 head(Ttest_results)
 ```
 |    From         |    To          |    pathway.number    |    pathwayID    |    Pval        |      coefficient in disease    |    coefficient in control    |    fdr         |
@@ -332,25 +338,20 @@ The following package and versions were used in the production of this vignette.
  [21] compiler_3.6.1      BiocGenerics_0.31.5 htmltools_0.3.6     knitr_1.24
 
 ```
-
 # References:
-1. 	Yu J, Smith VA, Wang PP, Hartemink AJ, Jarvis ED. Advances to Bayesian network inference for generating causal networks from observational biological data. Bioinformatics [Internet]. 2004 Dec 12 [cited 2019 Jun 10];20(18):3594–603. Available from: https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bth448
+1. 	Yu J, Smith VA, Wang PP, Hartemink AJ, Jarvis ED. Advances to Bayesian network inference for generating causal networks from observational biological data. Bioinformatics . 2004 Dec 12;20(18):3594–603.
 2. 	Gendelman R, Xing H, Mirzoeva OK, Sarde P, Curtis C, Feiler HS, et al. Bayesian network inference modeling identifies TRIB1 as a novel regulator of cell-cycle progression and survival in cancer cells. Cancer Res. 2017;77(7):1575–85. 
-3. 	Luo Y, El Naqa I, McShan DL, Ray D, Lohse I, Matuszak MM, et al. Unraveling biophysical interactions of radiation pneumonitis in non-small-cell lung cancer via Bayesian network analysis. Radiother Oncol [Internet]. 2017 Apr 1 [cited 2019 Jun 10];123(1):85–92. Available from: https://www.sciencedirect.com/science/article/pii/S0167814017300634
-4. 	Agrahari R, Foroushani A, Docking TR, Chang L, Duns G, Hudoba M, et al. Applications of Bayesian network models in predicting types of hematological malignancies. Sci Rep [Internet]. 2018 Dec 3 [cited 2019 Jun 10];8(1):6951. Available from: http://www.nature.com/articles/s41598-018-24758-5
-5. 	Ramos J, Das J, Felty Q, Yoo C, Poppiti R, Murrell D, et al. NRF1 motif sequence-enriched genes involved in ER/PR −ve HER2 +ve breast cancer signaling pathways. Breast Cancer Res Treat [Internet]. 2018 Nov 20 [cited 2019 Jun 10];172(2):469–85. Available from: http://link.springer.com/10.1007/s10549-018-4905-9
-6. 	Zhi-wei J, Zhen-lei Y, Cai-xiu Z, Li-ying W, Jun L, Hong-li W, et al. Comparison of the Network Structural Characteristics of Calcium Signaling Pathway in Cerebral Ischemia after Intervention by Different Components of Chinese Medicine. J Tradit Chinese Med. 2011;31(3):251–5. 
-7. 	Lou S, Ren L, Xiao J, Ding Q, Zhang W. Expression profiling based graph-clustering approach to determine renal carcinoma related pathway in response to kidney cancer. Eur Rev Med Pharmacol Sci. 2012;16(6):775–80. 
-8. 	Fu C, Deng S, Jin G, Wang X, Yu ZG. Bayesian network model for identification of pathways by integrating protein interaction with genetic interaction data. BMC Syst Biol. 2017;11. 
-9. 	Isci S, Ozturk C, Jones J, Otu HH. Pathway analysis of high-throughput biological data within a Bayesian network framework. 2011;27(12):1667–74.
-10. Korucuoglu M, Isci S, Ozgur A, Otu HH. Bayesian pathway analysis of cancer microarray data. PLoS One. 2014;9(7):1–8. 
-11. Spirtes P, Richardson T. Directed Cyclic Graphical Representations of Feedback Models. Proc Elev Conf Uncertain Artif Intell. 1995;1–37. 
-12. Neapolitan RE. Learning Bayesian networks. first. Chicago: Pearson Prentice Hall; 2004. 291–425 p. 
-13. Scutari M. Learning Bayesian Networks with the bnlearn R Package. J Stat Softw. 2010;35(3):1–22. 
-14. Hamm A, Prenen H, Van Delm W, Di Matteo M, Wenes M, Delamarre E, et al. Tumour-educated circulating monocytes are powerful candidate biomarkers for diagnosis and disease follow-up of colorectal cancer. Gut. 2016;65(6):990–1000. 
-15. Nagarajan R, Scutari M, Lèbre S. Bayesian Networks in R [Internet]. New York, NY: Springer New York; 2013 [cited 2018 Apr 17]. Available from: http://link.springer.com/10.1007/978-1-4614-6446-4
-16. Tibshirani R. The lasso method for variable selection in the cox model. Stat Med. 1997;16(4):385–95. 
-17. Bühlmann P, Geer S van de. Statistics for high-dimensional data: Methods, Theory and Applications [Internet]. Springer Series in Statistics. 2011. 7–34 p. Available from: http://www.springer.com/statistics/statistical+theory+and+methods/book/978-3-642-20191-2
-
-
-
+3. 	Luo Y, El Naqa I, McShan DL, Ray D, Lohse I, Matuszak MM, et al. Unraveling biophysical interactions of radiation pneumonitis in non-small-cell lung cancer via Bayesian network analysis. Radiother Oncol . 2017 Apr 1 ;123(1):85–92. 
+4. 	Agrahari R, Foroushani A, Docking TR, Chang L, Duns G, Hudoba M, et al. Applications of Bayesian network models in predicting types of hematological malignancies. Sci Rep . 2018 Dec 3;8(1):6951. 
+5. 	Zhi-wei J, Zhen-lei Y, Cai-xiu Z, Li-ying W, Jun L, Hong-li W, et al. Comparison of the Network Structural Characteristics of Calcium Signaling Pathway in Cerebral Ischemia after Intervention by Different Components of Chinese Medicine. J Tradit Chinese Med. 2011;31(3):251–5. 
+6. 	Lou S, Ren L, Xiao J, Ding Q, Zhang W. Expression profiling based graph-clustering approach to determine renal carcinoma related pathway in response to kidney cancer. Eur Rev Med Pharmacol Sci. 2012;16(6):775–80. 
+7. 	Fu C, Deng S, Jin G, Wang X, Yu ZG. Bayesian network model for identification of pathways by integrating protein interaction with genetic interaction data. BMC Syst Biol. 2017;11. 
+8. 	Isci S, Ozturk C, Jones J, Otu HH. Pathway analysis of high-throughput biological data within a Bayesian network framework. 2011;27(12):1667–74.
+9. Korucuoglu M, Isci S, Ozgur A, Otu HH. Bayesian pathway analysis of cancer microarray data. PLoS One. 2014;9(7):1–8.
+10. Spirtes P, Richardson T. Directed Cyclic Graphical Representations of Feedback Models. Proc Elev Conf Uncertain Artif Intell. 1995;1–37. 
+11. Neapolitan RE. Learning Bayesian networks. first. Chicago: Pearson Prentice Hall; 2004. 291–425 p. 
+12. Scutari M. Learning Bayesian Networks with the bnlearn R Package. J Stat Softw. 2010;35(3):1–22. 
+13. Hamm A, Prenen H, Van Delm W, Di Matteo M, Wenes M, Delamarre E, et al. Tumour-educated circulating monocytes are powerful candidate biomarkers for diagnosis and disease follow-up of colorectal cancer. Gut. 2016;65(6):990–1000. 
+14. Nagarajan R, Scutari M, Lèbre S. Bayesian Networks in R . New York, NY: Springer New York; 2013 [cited 2018 Apr 17].
+15. Tibshirani R. The lasso method for variable selection in the cox model. Stat Med. 1997;16(4):385–95. 
+16. Buhlmann P, Geer S van de. Statistics for high-dimensional data: Methods, Theory and Applications . Springer Series in Statistics. 2011. 7–34 p.

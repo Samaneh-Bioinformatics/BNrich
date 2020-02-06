@@ -4,7 +4,7 @@
 \alias{BN_struct}
 \title{Construct Bayesian networks structures}
 \usage{
-BN_struct(mapkG1)
+BN_struct(mapkG1 = mapkG1)
 }
 \arguments{
 \item{mapkG1}{A list contains unified signaling pathways}
@@ -16,5 +16,7 @@ A list contains Bayesian networks structures
 Construct BNs structures using unified signaling pathways
 }
 \examples{
+\dontrun{
 BN_struct(mapkG1)
+}
 }

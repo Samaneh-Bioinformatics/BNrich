@@ -9,7 +9,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' start_files()
+#' }
 
 start_files <- function(){
   destfile <- "./R/BNrich-start.rda"
@@ -22,7 +24,7 @@ start_files <- function(){
     oldw <- getOption("warn")
     options(warn = -1)
     for (file in files) {
-      tryCatch(download.file(file, destfile, method="auto"),
+      tryCatch(utils::download.file(file, destfile, method="libcurl"),
       error = function(e) print(paste(file, 'did not work out')))
     }
     options(warn = oldw)
@@ -43,10 +45,12 @@ start_files <- function(){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' unify_path()
+#' }
 
-unify_path <- function(dataH=dataH,dataD=dataD,mapkG = mapkG,pathway.id = pathway.id){
-  NOD <- lapply(mapkG,nodes)
+unify_path <- function(dataH,dataD,mapkG = mapkG,pathway.id = pathway.id){
+  NOD <- lapply(mapkG,graph::nodes)
   NOD <- lapply(NOD,as.vector)
   data_h <- list()
   data_d <- list()
@@ -91,11 +95,13 @@ unify_path <- function(dataH=dataH,dataD=dataD,mapkG = mapkG,pathway.id = pathwa
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' BN_struct(mapkG1)
+#' }
 
-BN_struct <- function(mapkG1){
-  BN=list()
-  BN <- lapply(mapkG1,as.bn)
+BN_struct <- function(mapkG1=mapkG1){
+  BN <- list()
+  BN <- lapply(mapkG1,bnlearn::as.bn)
   return(BN)
 }
 
@@ -104,7 +110,7 @@ BN_struct <- function(mapkG1){
 #' @param BN A list of Bayesian networks achieved by BN_struct function
 #' @param data_h A list contains data frames related to control objects
 #' @param data_d A list contains data frames related to disease objects
-#' @importFrom bnlearn nodes drop.arc
+#' @importFrom bnlearn drop.arc
 #' @importFrom glmnet cv.glmnet
 #' @importFrom stats coef
 #' @return A list contains two lists.BN_H and BN_D are simplified BNs
@@ -112,7 +118,9 @@ BN_struct <- function(mapkG1){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' LASSO_BN(BN,data_h,data_d)
+#' }
 
 LASSO_BN <- function(BN,data_h,data_d){
   oldw <- getOption("warn")
@@ -152,7 +160,9 @@ LASSO_BN <- function(BN,data_h,data_d){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' esti_par(BN_H,BN_D,data_h,data_d)
+#' }
 
 
 esti_par <- function(BN_H,BN_D,data_h,data_d){
@@ -184,7 +194,9 @@ esti_par <- function(BN_H,BN_D,data_h,data_d){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' var_mat(data_h,coef_h,BN_h,data_d,coef_d,BN_d)
+#' }
 
 
 var_mat <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d){
@@ -239,7 +251,9 @@ var_mat <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd, pathway.id1)
+#' }
 
 parm_Ttest <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd, pathway.id1){
   t.test2 <- function(m1,m2,s1,s2,n1,n2){
@@ -293,7 +307,9 @@ parm_Ttest <- function(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' BNrich(Ttest_results,pathway.id1,PathName_final)
+#' }
 
 BNrich <- function(Ttest_results,fdr.value = 0.05,pathway.id1,PathName_final){
   Ttest_results <- Ttest_results[order(Ttest_results$pathway.number),]

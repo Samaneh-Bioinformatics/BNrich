@@ -20,5 +20,7 @@ A list contains two lists.BN_H and BN_D are simplified BNs
 LASSO regression – second step of simplification of BNs structures
 }
 \examples{
+\dontrun{
 LASSO_BN(BN,data_h,data_d)
+}
 }

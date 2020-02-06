@@ -16,5 +16,7 @@ pathway.id is a character vector of pathways IDs
 Download necessary files to start BNrich
 }
 \examples{
+\dontrun{
 start_files()
+}
 }

@@ -4,8 +4,17 @@
 \alias{parm_Ttest}
 \title{Testing the equality regression coefficients}
 \usage{
-parm_Ttest(data_h, coef_h, BN_h, data_d, coef_d, BN_d, var_mat_Bh,
-  var_mat_Bd, pathway.id1)
+parm_Ttest(
+  data_h,
+  coef_h,
+  BN_h,
+  data_d,
+  coef_d,
+  BN_d,
+  var_mat_Bh,
+  var_mat_Bd,
+  pathway.id1
+)
 }
 \arguments{
 \item{data_h}{A list contains data frames related to control objects for any BN}
@@ -33,5 +42,7 @@ A data frame contains T-test results for all parameters in final BNs
 t-test for equality the corresponging parameters in any BN
 }
 \examples{
+\dontrun{
 parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh,var_mat_Bd, pathway.id1)
+}
 }

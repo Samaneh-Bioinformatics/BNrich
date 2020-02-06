@@ -22,5 +22,7 @@ A data frame contains fisher test results for any final pathways
 Fisher's exact test applied to PEA on final BNs
 }
 \examples{
+\dontrun{
 BNrich(Ttest_results,pathway.id1,PathName_final)
+}
 }

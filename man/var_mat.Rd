@@ -26,5 +26,7 @@ A listcontains two lists var_mat_Bh and var_mat_Bd
 Estimate variance-covariance matrixes for any parameters of
 }
 \examples{
+\dontrun{
 var_mat(data_h,coef_h,BN_h,data_d,coef_d,BN_d)
+}
 }

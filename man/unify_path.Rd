@@ -4,8 +4,7 @@
 \alias{unify_path}
 \title{Simplification networks -- applied to unifying nodes}
 \usage{
-unify_path(dataH = dataH, dataD = dataD, mapkG = mapkG,
-  pathway.id = pathway.id)
+unify_path(dataH, dataD, mapkG = mapkG, pathway.id = pathway.id)
 }
 \arguments{
 \item{dataH}{A data frame contains (healthy) control objects data}
@@ -23,5 +22,7 @@ A list contain data_h,data_d,mapkG1 and pathway.id1
 Unifying nodes based imported signaling pathways and GE data
 }
 \examples{
+\dontrun{
 unify_path()
+}
 }
