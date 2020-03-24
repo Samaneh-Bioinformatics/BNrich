@@ -4,20 +4,20 @@
 \alias{var_mat}
 \title{Estimate variance-covariance matrixes for any parameters of BNs}
 \usage{
-var_mat(data_h, coef_h, BN_h, data_d, coef_d, BN_d)
+var_mat(Data_h, coef_H, BNs_H, Data_d, coef_D, BNs_D)
 }
 \arguments{
-\item{data_h}{A list contains data frames related to control objects for any BN}
+\item{Data_h}{A list contains data frames related to control objects for any BN}
 
-\item{coef_h}{A lists of parameters of BN_h achieved}
+\item{coef_H}{A lists of parameters of BN_h achieved}
 
-\item{BN_h}{A list of BNs learned by control objects data}
+\item{BNs_H}{A list of BNs learned by control objects data}
 
-\item{data_d}{A list contains data frames related to disease objects for any BN}
+\item{Data_d}{A list contains data frames related to disease objects for any BN}
 
-\item{coef_d}{A lists of parameters of BN_d}
+\item{coef_D}{A lists of parameters of BN_d}
 
-\item{BN_d}{A list of BNs learned by disease objects data}
+\item{BNs_D}{A list of BNs learned by disease objects data}
 }
 \value{
 A listcontains two lists var_mat_Bh and var_mat_Bd
@@ -26,7 +26,24 @@ A listcontains two lists var_mat_Bh and var_mat_Bd
 Estimate variance-covariance matrixes for any parameters of
 }
 \examples{
-\dontrun{
-var_mat(data_h,coef_h,BN_h,data_d,coef_d,BN_d)
-}
+#All the 187 preprocessed signaling pathways can be entered in analysis by fetch_data_file().
+#But here you enter a subset of those pathways to see how this package works.
+files <- system.file("extdata", "test_files_to_start.RData", package = "BNrich", mustWork = TRUE)
+load(files)
+Data <- system.file("extdata", "Test_DATA.RData", package = "BNrich", mustWork = TRUE)
+load(Data)
+uni_Result <- unify_path(dataH, dataD, MapkG = sub_mapkG, Pathway.id = path.id)
+M1 <- uni_Result$mapkG1
+BN <- BN_struct(M1)
+data_h1 <- uni_Result$data_h
+data_d1 <- uni_Result$data_d
+LASSO_Result <- LASSO_BN(BN = BN , data_h = data_h1 , data_d = data_d1)
+BN_h1 <- LASSO_Result$BN_h
+BN_d1 <- LASSO_Result$BN_d
+esti_result <- esti_par(BN_H = BN_h1, BN_D = BN_d1, data_h = data_h1, data_d = data_d1)
+BNs_H <- esti_result$BNs_h
+BNs_D <- esti_result$BNs_d
+coef_h <- esti_result$coef_h
+coef_d <- esti_result$coef_d
+var_result <- var_mat(data_h1, coef_h,  BNs_H, data_d1, coef_d, BNs_D)
 }

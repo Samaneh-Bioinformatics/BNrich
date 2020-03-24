@@ -4,7 +4,7 @@
 \alias{BN_struct}
 \title{Construct Bayesian networks structures}
 \usage{
-BN_struct(mapkG1 = mapkG1)
+BN_struct(mapkG1)
 }
 \arguments{
 \item{mapkG1}{A list contains unified signaling pathways}
@@ -16,7 +16,13 @@ A list contains Bayesian networks structures
 Construct BNs structures using unified signaling pathways
 }
 \examples{
-\dontrun{
-BN_struct(mapkG1)
-}
+#All the 187 preprocessed signaling pathways can be entered in analysis by fetch_data_file().
+#But here you enter a subset of those pathways to see how this package works.
+files <- system.file("extdata", "test_files_to_start.RData", package = "BNrich", mustWork = TRUE)
+load(files)
+Data <- system.file("extdata", "Test_DATA.RData", package = "BNrich", mustWork = TRUE)
+load(Data)
+uni_Result <- unify_path(dataH, dataD, MapkG = sub_mapkG, Pathway.id = path.id)
+M1 <- uni_Result$mapkG1
+BN <- BN_struct(M1)
 }

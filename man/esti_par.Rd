@@ -16,13 +16,25 @@ esti_par(BN_H, BN_D, data_h, data_d)
 \item{data_d}{A list contains data frames related to disease objects for any BN}
 }
 \value{
-A listcontains four lists BN_h, BN_d, coef_h and coef_d
+A listcontains four lists BNs_h, BNs_d, coef_h and coef_d
 }
 \description{
 Estimate parameters of BNs in control and disease states
 }
 \examples{
-\dontrun{
-esti_par(BN_H,BN_D,data_h,data_d)
-}
+#All the 187 preprocessed signaling pathways can be entered in analysis by fetch_data_file().
+#But here you enter a subset of those pathways to see how this package works.
+files <- system.file("extdata", "test_files_to_start.RData", package = "BNrich", mustWork = TRUE)
+load(files)
+Data <- system.file("extdata", "Test_DATA.RData", package = "BNrich", mustWork = TRUE)
+load(Data)
+uni_Result <- unify_path(dataH, dataD, MapkG = sub_mapkG, Pathway.id = path.id)
+M1 <- uni_Result$mapkG1
+BN <- BN_struct(M1)
+data_h1 <- uni_Result$data_h
+data_d1 <- uni_Result$data_d
+LASSO_Result <- LASSO_BN(BN = BN , data_h = data_h1 , data_d = data_d1)
+BN_h1 <- LASSO_Result$BN_h
+BN_d1 <- LASSO_Result$BN_d
+esti_result <- esti_par(BN_H = BN_h1, BN_D = BN_d1, data_h = data_h1, data_d = data_d1)
 }

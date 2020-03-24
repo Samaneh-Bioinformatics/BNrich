@@ -4,16 +4,16 @@
 \alias{BNrich}
 \title{Analysis of significant final BNs}
 \usage{
-BNrich(Ttest_results, fdr.value = 0.05, pathway.id1, PathName_final)
+BNrich(Ttest_Results, Pathway.id1, PathName_Final, fdr.value = 0.05)
 }
 \arguments{
-\item{Ttest_results}{A data frame contains T-test results for all parameters}
+\item{Ttest_Results}{A data frame contains T-test results for all parameters}
+
+\item{Pathway.id1}{A vector contains modified KEEG pathway IDs}
+
+\item{PathName_Final}{A data frame contains is IDs and names of KEEG pathways}
 
 \item{fdr.value}{A numeric threshold to determine significant parameters}
-
-\item{pathway.id1}{A vector contains modified KEEG pathway IDs}
-
-\item{PathName_final}{A data frame contains is IDs and names of KEEG pathways}
 }
 \value{
 A data frame contains fisher test results for any final pathways
@@ -22,7 +22,29 @@ A data frame contains fisher test results for any final pathways
 Fisher's exact test applied to PEA on final BNs
 }
 \examples{
-\dontrun{
-BNrich(Ttest_results,pathway.id1,PathName_final)
-}
+#All the 187 preprocessed signaling pathways can be entered in analysis by fetch_data_file().
+#But here you enter a subset of those pathways to see how this package works.
+files <- system.file("extdata", "test_files_to_start.RData", package = "BNrich", mustWork = TRUE)
+load(files)
+Data <- system.file("extdata", "Test_DATA.RData", package = "BNrich", mustWork = TRUE)
+load(Data)
+uni_Result <- unify_path(dataH, dataD, MapkG = sub_mapkG, Pathway.id = path.id)
+M1 <- uni_Result$mapkG1
+BN <- BN_struct(M1)
+data_h1 <- uni_Result$data_h
+data_d1 <- uni_Result$data_d
+LASSO_Result <- LASSO_BN(BN = BN , data_h = data_h1 , data_d = data_d1)
+BN_h1 <- LASSO_Result$BN_h
+BN_d1 <- LASSO_Result$BN_d
+esti_result <- esti_par(BN_H = BN_h1, BN_D = BN_d1, data_h = data_h1, data_d = data_d1)
+BNs_H <- esti_result$BNs_h
+BNs_D <- esti_result$BNs_d
+coef_h <- esti_result$coef_h
+coef_d <- esti_result$coef_d
+var_result <- var_mat(data_h1, coef_h,  BNs_H, data_d1, coef_d, BNs_D)
+Var_H = var_result$var_mat_Bh
+Var_D = var_result$var_mat_Bd
+path.id1 <- uni_Result$pathway.id1
+Ttest_result <- parm_Ttest(data_h1, coef_h, BNs_H, data_d1, coef_d, BNs_D, Var_H, Var_D, path.id1)
+BNrich_result <- BNrich(Ttest_result, path.id1, Path.Name)
 }

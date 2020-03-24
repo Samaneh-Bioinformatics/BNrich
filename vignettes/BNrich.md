@@ -1,12 +1,15 @@
 ---
 title: 'BNrich: A Novel Pathway Enrichment Analysis Based on Bayesian Network'
-author: "Samaneh Maleknia*(1),Mohsen Namazi(1),Kaveh Kavousi(1),Ali Sharifi-Zarchi(2),Vahid Rezaei Tabar(3)"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::knitr}
+author: Samaneh Maleknia*(1),Mohsen Namazi(1),Kaveh Kavousi(1),Ali Sharifi-Zarchi(2),Vahid
+  Rezaei Tabar(3)
+output:
+  rmarkdown::html_vignette: default
+  rmarkdown::pdf: default
+vignette: |
   %\VignetteIndexEntry{BNrich_vignette}
   %\usepackage[UTF-8]{inputenc}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::knitr}
 ---
 
   (1) Department of Bioinformatics, Institute of Biochemistry and Biophysics, University of Tehran, Tehran, Iran 
@@ -21,25 +24,13 @@ vignette: >
   "maleknias@gmail.com"
   
   
-date: "2020-01-20"
+date: "2020-03-16"
 
 
-abstract: This package has developed a tool for performing a novel pathway enrichment analysis based on Bayesian network (BNrich) to investigate the topology features of the pathways. This algorithm as a biologically intuitive, method, analyzes of most structural data acquired from signaling pathways such as causal relationships between genes using the property of Bayesian networks and also infer finalized networks more conveniently by simplifying networks in the early stages and using Least Absolute Shrinkage Selector Operator (LASSO). impacted pathways are ultimately prioritized the by Fisher’s Exact Test on significant parameters. Here, we provide an instance code that applies BNrich in all of the fields described above.
+## Abstract:
 
----
-output:
-  html_document:
-    toc: true
-    toc_float:
-        collapsed: true
-        smooth_scroll: true
-    toc_depth: 3
-    fig_caption: yes
-    code_folding: show
-    number_sections: true
+This package has developed a tool for performing a novel pathway enrichment analysis based on Bayesian network (BNrich) to investigate the topology features of the pathways. This algorithm as a biologically intuitive, method, analyzes of most structural data acquired from signaling pathways such as causal relationships between genes using the property of Bayesian networks and also infer finalized networks more conveniently by simplifying networks in the early stages and using Least Absolute Shrinkage Selector Operator (LASSO). impacted pathways are ultimately prioritized the by Fisher’s Exact Test on significant parameters. Here, we provide an instance code that applies BNrich in all of the fields described above.
 
-fontsize: 14pt
----
 
 <!---
 - Compile from command-line
@@ -66,17 +57,20 @@ At first, we can load all the 187 preprocessed KEGG pathways which their cycles 
 
 
 ```r
-files <- start_files()
-load(files)
+destfile = tempfile("files", fileext = ".rda")
+files <- fetch_data_file()
+load(destfile)
 ```
+
+Note that it's better to use (for example:) `destfile = "./R/BNrich-start.rda"` to save essential files permanently.   
 
 The input data should be as two data frames in states disease and (healthy) control. The row names of any data frame are KEGG geneID and the number of subjects in any of them should not be less than 20, otherwise the user may encounters error in `LASSO` step. Initially, we can load dataset example.
 The example data extracted from a part of `GSE47756` dataset, the gene expression data from colorectal cancer study (13).
 
 
 ```r
-example <- c("dataH","dataD")
-data(list= example,package = "BNrich")
+Data <- system.file("extdata", "Test_DATA.RData", package = "BNrich", mustWork = TRUE)
+load(Data)
 head(dataH)
 ```
 
@@ -112,7 +106,7 @@ Initially, we need to unify gene products based on 187 imported signaling pathwa
 
 
 ```r
-unify_results <- unify_path(dataH, dataD, mapkG ,pathway.id)
+unify_results <- unify_path(dataH, dataD, mapkG, pathway.id)
 ```
 
 The `unify_path` function performs the following processes:
@@ -196,7 +190,7 @@ We perform this function for any node with more than one parent, in all BNs achi
 ```r
 data_h <- unify_results$data_h
 data_d <- unify_results$data_d
-LASSO_results <- LASSO_BN(BN,data_h,data_d)
+LASSO_results <- LASSO_BN(BN, data_h, data_d)
 ```
 
 The LASSO_BN function returns a list contains two lists BN_H and BN_D are simplified BNs structures based on LASSO regression related to healthy and disease objects. This function lead to reduce number of edges too:
@@ -229,7 +223,7 @@ Now we can estimate (learn) parameters for any BNs based on healthy and disease 
 ```r
 BN_H <- LASSO_results$BN_H
 BN_D <- LASSO_results$BN_D
-esti_results <- esti_par(BN_H,BN_D,data_h,data_d)
+esti_results <- esti_par(BN_H, BN_D, data_h, data_d)
 ```
 
 The `esti_par` function returns a list contains four lists. The `BN_h`, `BN_d`, are lists of BNs which their parameters learned by control and disease objects data. The `coef_h` and `coef_d` are lists of parameters of `BN_h` and `BN_d`.
@@ -237,7 +231,7 @@ As you can see in below, node `hsa:1978` in the first BN has one parent. The coe
 
 
 ```r
-esti_results$BN_h[[1]]$` hsa:1978`
+esti_results$BNs_h[[1]]$` hsa:1978`
 ```
 ```
 Parameters of node hsa:1978 (Gaussian distribution)
@@ -249,7 +243,7 @@ Standard deviation of the residuals: 0.3489612
 ```
 
 ```r
-esti_results$BN_d[[1]]$`hsa:1978`
+esti_results$BNs_d[[1]]$`hsa:1978`
 ```
 ```
 Parameters of node hsa:1978 (Gaussian distribution)
@@ -266,11 +260,11 @@ We require the variance of the BNs parameters to perform the T-test between the 
 
 
 ```r
-BN_h <- esti_results$BN_h
-BN_d <- esti_results$BN_d
+BN_h <- esti_results$BNs_h
+BN_d <- esti_results$BNs_d
 coef_h <- esti_results$coef_h
 coef_d <- esti_results$coef_d
-var_mat_results<- var_mat (data_h,coef_h,BN_h,data_d,coef_d,BN_d)
+var_mat_results<- var_mat (data_h, coef_h, BN_h, data_d, coef_d, BN_d)
 ```
 
 The `var_mat` function returns a list contains two lists `var_mat_Bh` and `var_mat_Bd` which are the variance-covariance matrixes for any parameters of `BN_h` and `BN_d`. The variance-covariance matrixes for the fifth node,`hsa:1978`, in first BN in two states control and disease is as follow: 
@@ -301,7 +295,7 @@ T-test perfoms between any corresponding parameters between each pair of learned
 ```r
 var_mat_Bh <- var_mat_results $var_mat_Bh
 var_mat_Bd <- var_mat_results $var_mat_Bd
-Ttest_results <- parm_Ttest(data_h,coef_h,BN_h,data_d,coef_d,BN_d,var_mat_Bh, var_mat_Bd,pathway.id1)
+Ttest_results <- parm_Ttest(data_h, coef_h, BN_h, data_d, coef_d, BN_d, var_mat_Bh, var_mat_Bd, pathway.id1)
 head(Ttest_results)
 ```
 |    From         |    To          |    pathway.number    |    pathwayID    |    Pval        |      coefficient in disease    |    coefficient in control    |    fdr         |
@@ -320,7 +314,7 @@ In the last step we can determine enriched pathways by own threshold on `p-value
 
 
 ```r
-BNrich_results <- BNrich(Ttest_results,fdr.value = 0.05,pathway.id1,PathName_final)
+BNrich_results <- BNrich(Ttest_results, pathway.id1, PathName_final, fdr.value = 0.05)
 head(BNrich_results)
 ```
 |    pathwayID    |    p.value     |    fdr         |    pathway.number    |    Name                                       |
