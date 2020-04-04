@@ -242,7 +242,7 @@ var_mat <- function(Data_h, coef_H, BNs_H, Data_d, coef_D, BNs_D){
   for (k in seq_along(Data_h)) {
     var_mat_Bh[[k]] <- list()
     for(i in seq_along(colnames(Data_h[[k]]))){
-      var_mat_Bh[[k]][[i]] <- BNs_H[[k]][[i]]$sd*pseudoinverse((t(X_h[[k]][[i]]))%*%(X_h[[k]][[i]]))}}
+      var_mat_Bh[[k]][[i]] <- (BNs_H[[k]][[i]]$sd)^2*pseudoinverse((t(X_h[[k]][[i]]))%*%(X_h[[k]][[i]]))}}
   X_d <- list()
   for (k in seq_along(Data_h)) {
     X_d[[k]] <- list()
@@ -257,7 +257,7 @@ var_mat <- function(Data_h, coef_H, BNs_H, Data_d, coef_D, BNs_D){
   for (k in seq_along(Data_h)) {
     var_mat_Bd[[k]] <- list()
     for(i in seq_along(colnames(Data_h[[k]]))){
-      var_mat_Bd[[k]][[i]] <- BNs_D[[k]][[i]]$sd*pseudoinverse((t(X_d[[k]][[i]]))%*%(X_d[[k]][[i]]))}}
+      var_mat_Bd[[k]][[i]] <- (BNs_D[[k]][[i]]$sd)^2*pseudoinverse((t(X_d[[k]][[i]]))%*%(X_d[[k]][[i]]))}}
   var_mat_results<- list("var_mat_Bh"=var_mat_Bh,"var_mat_Bd"=var_mat_Bd)
   return(var_mat_results)
 }
